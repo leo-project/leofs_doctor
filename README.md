@@ -140,3 +140,7 @@ http://erlang.org/documentation/doc-6.4/lib/mnesia-4.12.5/doc/html/mnesia.html
 - related to supervisour tree
 http://erlang.org/documentation/doc-6.4/lib/stdlib-2.4/doc/html/supervisor.html
   - Simply compare the current supervisour trees on memory with the expected one represented by a YAML file
+
+## Sponsors
+
+LeoProject/LeoFS is sponsored by [Rakuten, Inc.](http://global.rakuten.com/corp/) and supported by [Rakuten Institute of Technology](http://rit.rakuten.co.jp/).
