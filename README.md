@@ -1,4 +1,4 @@
-# leofs_diag
+# LeoFS Doctor
 
 ## Purpose
 Quick investigation into OTP applications on remote nodes with less operations.
