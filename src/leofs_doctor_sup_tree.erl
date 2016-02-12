@@ -45,11 +45,18 @@ info(Node, SupRef) ->
 
 %% @private
 info_1(Node, SupRef, Level, Acc) ->
-    case catch rpc:call(Node, supervisor, which_children, [SupRef]) of
-        {'EXIT', Cause} ->
-            {error, Cause};
-        RetL ->
-            info_2(RetL, Node, Level + 1, Acc)
+    case rpc:call(Node, erlang, whereis, [SupRef]) of
+        undefined ->
+            {error, undefined};
+        _ ->
+            case catch rpc:call(Node, supervisor, which_children, [SupRef]) of
+                {badrpc, Cause} ->
+                    {error, Cause};
+                timeout = Cause ->
+                    {error, Cause};
+                RetL ->
+                    info_2(RetL, Node, Level + 1, Acc)
+            end
     end.
 
 %% @private
