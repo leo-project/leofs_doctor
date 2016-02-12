@@ -48,6 +48,10 @@ info_1(Node, SupRef, Level, Acc) ->
     case rpc:call(Node, erlang, whereis, [SupRef]) of
         undefined ->
             {error, undefined};
+        {badrpc, Cause} ->
+            {error, Cause};
+        timeout = Cause ->
+            {error, Cause};
         _ ->
             case catch rpc:call(Node, supervisor, which_children, [SupRef]) of
                 {badrpc, Cause} ->
