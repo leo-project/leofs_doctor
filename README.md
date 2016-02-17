@@ -18,11 +18,11 @@ Build as a CUI tool.
 - Input
 
 ```shell
-$ leofs-diag --help
-Usage: leofs-diag ## related to connection
+$ leofs-doctor --help
+Usage: leofs-doctor ## related to connection
                   [-name <NAME>|-sname <SNAME>] [-setcookie <COOKIE>]
                   ## related to entop
-                  [-sort_col <COL_NAME>] [-reverse <yes|no>] [-n <TOPN>]
+                  [-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]
                   ## related to recon
                   [-bin_leak <TOPN>] [-proc_count <ATTR_NAME,TOPN>] [-inet_count] 
                   ## related to mnesia
@@ -33,7 +33,7 @@ Usage: leofs-diag ## related to connection
 ```
 
 ```yaml
-## file format used by leofs-diag's param (-expected_svt)
+## file format used by leofs-doctor's param (-expected_svt)
 ## Simply write supervisour trees with YAML like this
 - leo_storage_sup
   - leo_redundant_manager_sup
@@ -144,3 +144,6 @@ http://erlang.org/documentation/doc-6.4/lib/stdlib-2.4/doc/html/supervisor.html
 ## Sponsors
 
 LeoProject/LeoFS is sponsored by [Rakuten, Inc.](http://global.rakuten.com/corp/) and supported by [Rakuten Institute of Technology](http://rit.rakuten.co.jp/).
+
+## Code
+The part of code is derived from [entop](https://github.com/mazenharake/entop).
