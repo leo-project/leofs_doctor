@@ -43,10 +43,6 @@
 %% Module API
 -export([draw/1]).
 
-%% Defines
--define(PRINT(Str), io:format(user, Str, [])).
--define(PRINTF(FStr, Args), io:format(user, FStr, Args)).
-
 %% =============================================================================
 %% Module API
 %% =============================================================================

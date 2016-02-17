@@ -53,18 +53,32 @@
 %% =============================================================================
 start(_, _) ->
     Res = leofs_doctor_sup:start_link(),
-    %% parameters related to connections
-    Node = get_argument(target_node, 'manager_0@127.0.0.1', fun erlang:list_to_atom/1),
-    %% parameters related to entop
-    SortCol = get_argument(sort_col, 3, fun entop_format:colname_to_idx/1),
-    Reverse = get_argument(reverse, true, fun list_to_bool/1),
-    TopN = get_argument(topn, 10, fun erlang:list_to_integer/1),
-    State = #state{ node = Node,
-                    sort = SortCol,
-                    reverse_sort = Reverse,
-                    topn = TopN
-                  },
-    start(State),
+    try
+        %% show usage
+        case get_argument(help, false, fun any_to_true/1) of
+            true ->
+                usage(),
+                halt();
+            false ->
+                nop
+        end,
+        %% parameters related to connections
+        Node = get_argument(target_node, 'manager_0@127.0.0.1', fun erlang:list_to_atom/1),
+        %% parameters related to entop
+        SortCol = get_argument(sort_col, 3, fun entop_format:colname_to_idx/1),
+        Reverse = get_argument(reverse, true, fun list_to_bool/1),
+        TopN = get_argument(topn, 10, fun erlang:list_to_integer/1),
+        State = #state{ node = Node,
+                        sort = SortCol,
+                        reverse_sort = Reverse,
+                        topn = TopN
+                      },
+        start(State)
+    catch
+        _:_ ->
+            usage()
+    end,
+    halt(),
     Res.
 
 stop(_) ->
@@ -78,13 +92,24 @@ start(#state{node = Node} = State) ->
         true ->
             entop_view:draw(State);
         false ->
+            ?PRINTF("Failed to connect ~p~n", [Node]),
             nop
-    end,
-    halt().
+    end.
 
 %% =============================================================================
 %% Inner function
 %% =============================================================================
+usage() ->
+    Usage = lists:append([
+                "Usage: leofs_doctor~n",
+                "\t[-target_node <TARGET_NODE>]~n",
+                "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
+                "\t[-bin_leak <TOPN>] [-proc_count <ATTR_NAME,TOPN>] [-inet_count]~n",
+                "\t[-system_info] [-table_info <TABLES>]~n",
+                "\t[-expected_svt <FILENAME>]~n"
+                ]),
+    ?PRINT(Usage).
+
 get_argument(Key, Def, Modifier) ->
     case init:get_argument(Key) of
         {ok, [[Val]]} ->
@@ -92,6 +117,9 @@ get_argument(Key, Def, Modifier) ->
         _ ->
             Def
     end.
+
+any_to_true(_) ->
+    true.
 
 list_to_bool("true") ->
     true;
