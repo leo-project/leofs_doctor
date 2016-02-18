@@ -90,7 +90,10 @@ stop(_) ->
 start(#state{node = Node} = State) ->
     case net_kernel:connect(Node) of
         true ->
-            entop_view:draw(State);
+            ?PRINT("[entop]~n"),
+            entop_view:draw(State),
+            ?PRINT("~n[mnesia]~n"),
+            mnesia_view:draw(State);
         false ->
             ?PRINTF("Failed to connect ~p~n", [Node]),
             nop
