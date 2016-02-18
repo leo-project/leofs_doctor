@@ -53,7 +53,7 @@
 %% =============================================================================
 start(_, _) ->
     Res = leofs_doctor_sup:start_link(),
-    try
+    State = try
         %% show usage
         case get_argument(help, false, fun any_to_true/1) of
             true ->
@@ -68,16 +68,23 @@ start(_, _) ->
         SortCol = get_argument(sort_col, 3, fun entop_format:colname_to_idx/1),
         Reverse = get_argument(reverse, true, fun list_to_bool/1),
         TopN = get_argument(topn, 10, fun erlang:list_to_integer/1),
-        State = #state{ node = Node,
-                        sort = SortCol,
-                        reverse_sort = Reverse,
-                        topn = TopN
-                      },
-        start(State)
+        %% parameters related to supervisor tree
+        RootSup = get_argument(root_sup, nop, fun erlang:list_to_atom/1),
+        ExpectedSVT = get_argument(expected_svt, "", fun nop/1),
+        #state{ node = Node,
+                sort = SortCol,
+                reverse_sort = Reverse,
+                topn = TopN,
+                root_sup = RootSup,
+                expected_svt = ExpectedSVT
+               }
     catch
         _:_ ->
-            usage()
+            %% argument parse error occured
+            usage(),
+            halt()
     end,
+    start(State),
     halt(),
     Res.
 
@@ -93,7 +100,9 @@ start(#state{node = Node} = State) ->
             ?PRINT("[entop]~n"),
             entop_view:draw(State),
             ?PRINT("~n[mnesia]~n"),
-            mnesia_view:draw(State);
+            mnesia_view:draw(State),
+            ?PRINT("~n[supervisor tree]~n"),
+            svt_view:draw(State);
         false ->
             ?PRINTF("Failed to connect ~p~n", [Node]),
             nop
@@ -120,6 +129,9 @@ get_argument(Key, Def, Modifier) ->
         _ ->
             Def
     end.
+
+nop(S) ->
+    S.
 
 any_to_true(_) ->
     true.

@@ -38,7 +38,7 @@
 -record(state, { callback = entop_format, remote_module = entop_collector,
 		 columns, cbstate, node, otp_version, erts_version, os_fam, os,
 		 os_version, node_flags, reverse_sort = true,
-		 sort = 1, topn = 10 }).
+		 sort = 1, topn = 10, root_sup, expected_svt }).
 %% Defines
 -define(PRINT(Str), io:format(user, Str, [])).
 -define(PRINTF(FStr, Args), io:format(user, FStr, Args)).
