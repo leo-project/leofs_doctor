@@ -46,6 +46,6 @@ build_svt_1([], Acc) ->
     {ok, Acc};
 build_svt_1([{Id, _Pid, supervisor,_Modules}|Rest], Acc) ->
     {ok, NAcc} = build_svt(Id, []),
-    build_svt_1(Rest, [{Id, NAcc}|Acc]);
+    build_svt_1(Rest, [[{atom_to_list(Id), NAcc}]|Acc]);
 build_svt_1([{Id, _Pid, _Type,_Modules}|Rest], Acc)->
-    build_svt_1(Rest, [{Id, []}|Acc]).
+    build_svt_1(Rest, [atom_to_list(Id)|Acc]).

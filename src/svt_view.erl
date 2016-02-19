@@ -57,43 +57,9 @@ print_svt(SVT) ->
 
 check_svt(_SVT, "") ->
     ok;
-check_svt(_SVT, Expected) ->
+check_svt(CurrentSVT, Expected) ->
     [ExpectedSVT]= yamerl_constr:file(Expected),
     ?PRINTF("- expected: ~p~n", [ExpectedSVT]),
+    Missing = ExpectedSVT -- CurrentSVT,
+    ?PRINTF("- missing: ~p~n", [Missing]),
     ok.
-%%%    Missing = check_svt(SVT, ExpectedSVT, []),
-%%%    ?PRINTF("- missing: ~p~n", [Missing]).
-%%%
-%%%check_svt(_SVT, [], Acc) ->
-%%%    Acc;
-%%%check_svt(SVT, [H|Rest], Acc) ->
-%%%    ?PRINTF("[debug] traversing:~p~n", [H]),
-%%%    NAcc = check_svt_1(SVT, H, []),
-%%%    check_svt_1(SVT, Rest, [NAcc|Acc]).
-%%%
-%%%check_svt_1(_SVT, [], Acc) ->
-%%%    Acc;
-%%%check_svt_1(SVT, [{Name, null}|Rest], Acc) ->
-%%%    ?PRINTF("[debug] traversing worker:~p~n", [Name]),
-%%%    % worker
-%%%    case proplists:get_value(list_to_atom(Name), SVT) of
-%%%        undefined ->
-%%%            check_svt_1(SVT, Rest, [Name|Acc]);
-%%%        _ ->
-%%%            check_svt_1(SVT, Rest, Acc)
-%%%    end;
-%%%check_svt_1(SVT, [{Name, ExpChildren}|Rest], Acc) ->
-%%%    AName = list_to_atom(Name),
-%%%    ?PRINTF("[debug] traversing sup:~p child:~p SVT:~p~n", [AName, ExpChildren, SVT]),
-%%%    % supervisor
-%%%    case proplists:get_value(AName, SVT) of
-%%%        undefined ->
-%%%            check_svt_1(SVT, Rest, [Name|Acc]);
-%%%        ChildrenSVT ->
-%%%            ?PRINTF("[debug] traversing proplists_child:~p~n", [ChildrenSVT]),
-%%%            NAcc = check_svt(ChildrenSVT, ExpChildren, Acc),
-%%%            check_svt_1(SVT, Rest, [NAcc|Acc])
-%%%    end;
-%%%check_svt_1(_SVT, [Other|_Rest], _Acc) ->
-%%%    % unexpected
-%%%    ?PRINTF("[debug] unexpected:~p~n", [Other]).

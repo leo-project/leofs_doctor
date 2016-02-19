@@ -1,41 +1,41 @@
 - tcp_server_sup:
-  - tcp_server_cui_3:
-  - tcp_server_cui_2:
-  - tcp_server_cui_1:
-  - tcp_server_json_16:
-  - tcp_server_json_15:
-  - tcp_server_json_14:
-  - tcp_server_json_13:
-  - tcp_server_json_12:
-  - tcp_server_json_11:
-  - tcp_server_json_10:
-  - tcp_server_json_9:
-  - tcp_server_json_8:
-  - tcp_server_json_7:
-  - tcp_server_json_6:
-  - tcp_server_json_5:
-  - tcp_server_json_4:
-  - tcp_server_json_3:
-  - tcp_server_json_2:
-  - tcp_server_json_1:
-- leo_manager_cluster_monitor:
-- leo_manager_table_sync:
-- leo_manager_ring_sync:
+  - tcp_server_cui_3
+  - tcp_server_cui_2
+  - tcp_server_cui_1
+  - tcp_server_json_16
+  - tcp_server_json_15
+  - tcp_server_json_14
+  - tcp_server_json_13
+  - tcp_server_json_12
+  - tcp_server_json_11
+  - tcp_server_json_10
+  - tcp_server_json_9
+  - tcp_server_json_8
+  - tcp_server_json_7
+  - tcp_server_json_6
+  - tcp_server_json_5
+  - tcp_server_json_4
+  - tcp_server_json_3
+  - tcp_server_json_2
+  - tcp_server_json_1
+- leo_manager_cluster_monitor
+- leo_manager_table_sync
+- leo_manager_ring_sync
 - leo_mq_sup:
   - leo_backend_db_sup:
-    - mq_fail_rebalance_message_2:
-    - mq_fail_rebalance_message_1:
-    - mq_fail_rebalance_message_0:
-    - mq_monitor_node_message:
-  - mq_fail_rebalance:
-  - mq_fail_rebalance_consumer3:
-  - mq_fail_rebalance_consumer2:
-  - mq_fail_rebalance_consumer1:
-  - mq_monitor_node:
-  - mq_monitor_node_consumer1:
+    - mq_fail_rebalance_message_2
+    - mq_fail_rebalance_message_1
+    - mq_fail_rebalance_message_0
+    - mq_monitor_node_message
+  - mq_fail_rebalance
+  - mq_fail_rebalance_consumer3
+  - mq_fail_rebalance_consumer2
+  - mq_fail_rebalance_consumer1
+  - mq_monitor_node
+  - mq_monitor_node_consumer1
 - leo_redundant_manager_sup:
-  - leo_redundant_manager_worker:
-  - leo_redundant_manager:
-  - leo_membership_cluster_remote:
-  - leo_membership_cluster_local:
-  - leo_mdcr_tbl_sync:
+  - leo_redundant_manager_worker
+  - leo_redundant_manager
+  - leo_membership_cluster_remote
+  - leo_membership_cluster_local
+  - leo_mdcr_tbl_sync
