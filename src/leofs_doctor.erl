@@ -97,6 +97,8 @@ stop(_) ->
 start(#state{node = Node} = State) ->
     case net_kernel:connect(Node) of
         true ->
+            {{Y,M,D},{H,MI,S}} = calendar:local_time(),
+            ?PRINTF("Date: ~4w/~2..0w/~2..0w ~2..0w:~2..0w:~2..0w~n~n", [Y,M,D,H,MI,S]),
             ?PRINT("[entop]~n"),
             entop_view:draw(State),
             ?PRINT("~n[mnesia]~n"),
