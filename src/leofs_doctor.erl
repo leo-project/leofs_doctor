@@ -103,6 +103,8 @@ start(#state{node = Node} = State) ->
             entop_view:draw(State),
             ?PRINT("~n[mnesia]~n"),
             mnesia_view:draw(State),
+            ?PRINT("~n[ets]~n"),
+            ets_view:draw(State),
             ?PRINT("~n[supervisor tree]~n"),
             svt_view:draw(State);
         false ->
@@ -118,9 +120,7 @@ usage() ->
                 "Usage: leofs_doctor~n",
                 "\t[-target_node <TARGET_NODE>]~n",
                 "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
-                "\t[-bin_leak <TOPN>] [-proc_count <ATTR_NAME,TOPN>] [-inet_count]~n",
-                "\t[-system_info] [-table_info <TABLES>]~n",
-                "\t[-expected_svt <FILENAME>]~n"
+                "\t[-root_sup <SUPERVISOR_NAME>][-expected_svt <FILENAME>]~n"
                 ]),
     ?PRINT(Usage).
 
