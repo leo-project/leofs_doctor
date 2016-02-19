@@ -58,34 +58,36 @@
 %% Module API
 %% =============================================================================
 colname_to_idx("reductions") ->
-    3;
+    5;
 colname_to_idx("red") ->
-    3;
+    5;
 colname_to_idx("mqueue") ->
-    4;
+    6;
 colname_to_idx("mq") ->
-    4;
+    6;
 colname_to_idx("hsize") ->
-    5;
-colname_to_idx("hs") ->
-    5;
-colname_to_idx("ssize") ->
-    6;
-colname_to_idx("ss") ->
-    6;
-colname_to_idx("htotal") ->
     7;
+colname_to_idx("hs") ->
+    7;
+colname_to_idx("ssize") ->
+    8;
+colname_to_idx("ss") ->
+    8;
+colname_to_idx("htotal") ->
+    9;
 colname_to_idx("ht") ->
-    7.
+    9.
 
 init(Node) ->
-    Columns = [{"Pid", 12, [{align, right}]},
-	       {"Registered Name", 20, []},
+    Columns = [{"Pid", 16, [{align, right}]},
+           {"Registered Name", 20, []},
+           {"Initial Call", 30, []},
+           {"Current Function", 40, []},
 	       {"Reductions", 12, []},
 	       {"MQueue", 6, []},
-	       {"HSize", 6, []},
+	       {"HSize", 12, []},
 	       {"SSize", 6, []},
-	       {"HTotal", 6, []}],
+	       {"HTotal", 12, []}],
     {ok, Columns, #state{ node = Node }}.
 
 %% Header Callback
@@ -127,12 +129,17 @@ row(ProcessInfo, State) ->
 		  Name ->
 		      atom_to_list(Name)
 	      end,
+    InitialCall = fun2str(proplists:get_value(initial_call, ProcessInfo, 0)),
+    CurrentFunction = fun2str(proplists:get_value(current_function, ProcessInfo, 0)),
     Reductions = proplists:get_value(reductions, ProcessInfo, 0),
     Queue = proplists:get_value(message_queue_len, ProcessInfo, 0),
     Heap = proplists:get_value(heap_size, ProcessInfo, 0),
     Stack = proplists:get_value(stack_size, ProcessInfo, 0),
     HeapTot = proplists:get_value(total_heap_size, ProcessInfo, 0),
-    {ok, {Pid, RegName, Reductions, Queue, Heap, Stack, HeapTot}, State}.
+    {ok, {Pid, RegName, InitialCall, CurrentFunction, Reductions, Queue, Heap, Stack, HeapTot}, State}.
+
+fun2str({M, N, A}) ->
+    lists:append([atom_to_list(M), ":", atom_to_list(N), "/", integer_to_list(A)]).
 
 mem2str(Mem) ->
     if Mem > ?GIB -> io_lib:format("~.1fm",[Mem/?MIB]);

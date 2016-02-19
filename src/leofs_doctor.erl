@@ -65,7 +65,7 @@ start(_, _) ->
         %% parameters related to connections
         Node = get_argument(target_node, 'manager_0@127.0.0.1', fun erlang:list_to_atom/1),
         %% parameters related to entop
-        SortCol = get_argument(sort_col, 3, fun entop_format:colname_to_idx/1),
+        SortCol = get_argument(sort_col, 5, fun entop_format:colname_to_idx/1),
         Reverse = get_argument(reverse, true, fun list_to_bool/1),
         TopN = get_argument(topn, 10, fun erlang:list_to_integer/1),
         %% parameters related to supervisor tree
