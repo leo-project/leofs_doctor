@@ -35,7 +35,7 @@ $ tree -vhD ./_rel/leofs_doctor/bin/
 ```shell
 $ leofs_doctor --help
 Usage: leofs_doctor ## related to connection
-                  [-target_node <TARGET_NODE>]
+                  -target_node <TARGET_NODE>
                   ## related to entop
                   [-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]
                   ## related to supervisour tree
@@ -61,7 +61,55 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
 #### Output
 
 ```erlang
-Date: 2016/02/19 11:39:09
+- Date: 2016/02/22 17:15:40
+
+- Loaded libraries
+            Library Name Version   Desctiption
+                    bear 0.8.2     A set of statistics functions for erlang
+                 bitcask 1.7.0
+                  crypto 3.5       CRYPTO
+                eleveldb 2.1.4
+                   eunit 2.2.9     EUnit
+                  folsom 0.8.2     Erlang based metrics system
+                      gs 1.5.16    GS  The Graphics System
+                   jiffy 0.14.4    JSON Decoder/Encoder.
+                  kernel 3.2       ERTS  CXC 138 10
+          leo_backend_db 1.1.15    Leo Backend db
+             leo_commons 1.1.6     Leo Commons
+              leo_logger 1.2.2     Leo Logger
+             leo_manager 1.2.18    LeoFS Manager
+                  leo_mq 1.3.18    Leo MQ
+      leo_object_storage 1.2.12    Leo Object Storage
+                 leo_pod 0.6.6     leo_pod manages worker process pools
+   leo_redundant_manager 1.9.22    Leo Redundant Manaeger
+                 leo_rpc 0.10.7    leo rpc library
+             leo_s3_libs 1.1.8     Leo S3-Libs
+          leo_statistics 1.1.10    Leo Statistics lib for Erlang
+                     lz4 0.2.2
+                  mnesia 4.12.5    MNESIA  CXC 138 12
+                observer 2.0.4     OBSERVER version 1
+                   recon 2.2.1     Diagnostic tools for production use
+           runtime_tools 1.8.16    RUNTIME_TOOLS
+                    sasl 2.4.1     SASL  CXC 138 11
+         savanna_commons 0.8.16    Savanna's common library
+                    snmp 5.1.1     SNMP  CXC 138 13
+                  stdlib 2.4       ERTS  CXC 138 10
+            syntax_tools 1.6.18    Syntax tools
+                   tools 2.7.2     DEVTOOLS  CXC 138 16
+
+- Running apps
+
+                App Name Pid
+                  crypto undefined
+                  kernel <5504.591.0>
+              leo_logger <5504.664.0>
+             leo_manager <5504.636.0>
+                 leo_rpc <5504.692.0>
+          leo_statistics <5504.1395.0>
+                  mnesia <5504.752.0>
+                    sasl <5504.625.0>
+                    snmp <5504.1404.0>
+                  stdlib undefined
 
 [entop]
 Node: 'manager_0@127.0.0.1'
