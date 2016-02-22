@@ -45,12 +45,13 @@
 %% Application API
 -export([start/1]).
 
--define(DEF_NODE, 'manager_0@127.0.0.1').
+
 -define(DEF_SORT_COL, 5).
 -define(DEF_REVERSE, true).
 -define(DEF_TOPN, 10).
 -define(DEF_ROOT_SUP, nop).
 -define(DEF_EXPECTED_SUP_TREE, []).
+
 
 %% =============================================================================
 %% Behaviour Callbacks
@@ -66,14 +67,22 @@ start(_,_) ->
                     false ->
                         nop
                 end,
-                #state{
-                   node = get_argument(target_node, ?DEF_NODE, fun erlang:list_to_atom/1),
-                   sort = get_argument(sort_col, ?DEF_SORT_COL, fun entop_format:colname_to_idx/1),
-                   reverse_sort = get_argument(reverse, ?DEF_REVERSE, fun list_to_bool/1),
-                   topn = get_argument(topn, ?DEF_TOPN, fun erlang:list_to_integer/1),
-                   root_sup = get_argument(root_sup, ?DEF_ROOT_SUP, fun erlang:list_to_atom/1),
-                   expected_svt = get_argument(expected_svt, ?DEF_EXPECTED_SUP_TREE, fun nop/1)
-                  }
+                case get_argument(
+                       target_node, undefined, fun erlang:list_to_atom/1) of
+                    undefined ->
+                        ?PRINT("[ERROR] Put a target node with 'target_node' option~n~n"),
+                        usage(),
+                        halt();
+                    Node ->
+                        #state{
+                           node = Node,
+                           sort = get_argument(sort_col, ?DEF_SORT_COL, fun entop_format:colname_to_idx/1),
+                           reverse_sort = get_argument(reverse, ?DEF_REVERSE, fun list_to_bool/1),
+                           topn = get_argument(topn, ?DEF_TOPN, fun erlang:list_to_integer/1),
+                           root_sup = get_argument(root_sup, ?DEF_ROOT_SUP, fun erlang:list_to_atom/1),
+                           expected_svt = get_argument(expected_svt, ?DEF_EXPECTED_SUP_TREE, fun nop/1)
+                          }
+                end
             catch
                 _:_ ->
                     %% argument parse error occured
@@ -90,19 +99,37 @@ stop(_) ->
 %% =============================================================================
 %% Application API
 %% =============================================================================
-start(#state{node = Node} = State) ->
+start(#state{node = Node,
+             root_sup = RootSup} = State) ->
     case net_kernel:connect(Node) of
         true ->
+            %% Output general info
+            ?PRINT("[general info]~n"),
             {{Y,M,D},{H,MI,S}} = calendar:local_time(),
-            ?PRINTF("Date: ~4w/~2..0w/~2..0w ~2..0w:~2..0w:~2..0w~n~n", [Y,M,D,H,MI,S]),
+            ?PRINTF("- Date: ~4w/~2..0w/~2..0w ~2..0w:~2..0w:~2..0w~n~n",
+                    [Y,M,D,H,MI,S]),
+            app_view:draw(State),
+
+            %% Output a result of entop
             ?PRINT("[entop]~n"),
             entop_view:draw(State),
+
+            %% Output mnesia status
             ?PRINT("~n[mnesia]~n"),
             mnesia_view:draw(State),
+
+            %% Output ets status
             ?PRINT("~n[ets]~n"),
             ets_view:draw(State),
-            ?PRINT("~n[supervisor tree]~n"),
-            svt_view:draw(State);
+
+            %% Output supervisor-info of the under root-supervisor
+            case RootSup of
+                nop ->
+                    void;
+                _ ->
+                    ?PRINT("~n[supervisor tree]~n"),
+                    svt_view:draw(State)
+            end;
         false ->
             ?PRINTF("Failed to connect ~p~n", [Node]),
             nop
@@ -115,7 +142,7 @@ start(#state{node = Node} = State) ->
 usage() ->
     Usage = lists:append([
                           "Usage: leofs_doctor~n",
-                          "\t[-target_node <TARGET_NODE>]~n",
+                          "\t-target_node <TARGET_NODE>~n",
                           "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
                           "\t[-root_sup <SUPERVISOR_NAME>][-expected_svt <FILENAME>]~n"
                          ]),
