@@ -58,7 +58,7 @@ cols() ->
      {"Size", 10, []}].
 
 row(TableInfo) ->
-    Name= proplists:get_value(name, TableInfo),
+    Name = proplists:get_value(name, TableInfo),
     Access = proplists:get_value(protection, TableInfo, public),
     Memory = proplists:get_value(memory, TableInfo, 0),
     Size = proplists:get_value(size, TableInfo, 0),
