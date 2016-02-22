@@ -99,19 +99,37 @@ stop(_) ->
 %% =============================================================================
 %% Application API
 %% =============================================================================
-start(#state{node = Node} = State) ->
+start(#state{node = Node,
+             root_sup = RootSup} = State) ->
     case net_kernel:connect(Node) of
         true ->
+            %% Output general info
+            ?PRINT("[general info]~n"),
             {{Y,M,D},{H,MI,S}} = calendar:local_time(),
-            ?PRINTF("Date: ~4w/~2..0w/~2..0w ~2..0w:~2..0w:~2..0w~n~n", [Y,M,D,H,MI,S]),
+            ?PRINTF("- Date: ~4w/~2..0w/~2..0w ~2..0w:~2..0w:~2..0w~n~n",
+                    [Y,M,D,H,MI,S]),
+            app_view:draw(State),
+
+            %% Output a result of entop
             ?PRINT("[entop]~n"),
             entop_view:draw(State),
+
+            %% Output mnesia status
             ?PRINT("~n[mnesia]~n"),
             mnesia_view:draw(State),
+
+            %% Output ets status
             ?PRINT("~n[ets]~n"),
             ets_view:draw(State),
-            ?PRINT("~n[supervisor tree]~n"),
-            svt_view:draw(State);
+
+            %% Output supervisor-info of the under root-supervisor
+            case RootSup of
+                nop ->
+                    void;
+                _ ->
+                    ?PRINT("~n[supervisor tree]~n"),
+                    svt_view:draw(State)
+            end;
         false ->
             ?PRINTF("Failed to connect ~p~n", [Node]),
             nop
