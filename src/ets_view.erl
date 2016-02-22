@@ -87,7 +87,7 @@ print_tableinfo(TableProplist) ->
     ?PRINT("~n- Table Info~n~n"),
     Cols = cols(),
     draw_title_bar(Cols, ""),
-    RowList = prd(TableProplist, []), 
+    RowList = prd(TableProplist, []),
     update_rows(RowList, Cols).
 
 update_rows([], _) ->

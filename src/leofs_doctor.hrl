@@ -19,7 +19,6 @@
 %% under the License.
 %%
 %%======================================================================
-%%==============================================================================
 %% Copyright 2010 Erlang Solutions Ltd.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +32,8 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%==============================================================================
-%% Records 
+%%======================================================================
+%% Records
 -record(state, { callback = entop_format, remote_module = entop_collector,
 		 columns, cbstate, node, otp_version, erts_version, os_fam, os,
 		 os_version, node_flags, reverse_sort = true,
