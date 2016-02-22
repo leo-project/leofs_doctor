@@ -19,7 +19,6 @@
 %% under the License.
 %%
 %%======================================================================
-%%==============================================================================
 %% Copyright 2010 Erlang Solutions Ltd.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +32,8 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%==============================================================================
+%%======================================================================
 -module(entop_view).
-
--author('mazen.harake@erlang-solutions.com').
 
 -include("leofs_doctor.hrl").
 
@@ -81,13 +78,13 @@ print_nodeinfo(State) ->
     OsVers = lists:concat([Mj,".",Md,".",Mi]),
     ?PRINT(io_lib:format("Node: ~p ~n",[State#state.node])),
     Head = io_lib:format(" (~s/~s) ~p (~p ~s)~s~n",
-			 [State#state.otp_version, 
+			 [State#state.otp_version,
 			  State#state.erts_version, State#state.os_fam,
 			  State#state.os, OsVers, flags2str(State#state.node_flags)]),
     ok = ?PRINT(lists:flatten(Head)).
 
 flags2str([]) -> [];
-flags2str([{cpus, N}|Rest]) -> 
+flags2str([{cpus, N}|Rest]) ->
     [" CPU:"++integer_to_list(N)|flags2str(Rest)];
 flags2str([{smp, true}|Rest]) ->
     [" SMP"|flags2str(Rest)];
@@ -114,11 +111,11 @@ update_screen(Time, HeaderData, RowDataList, State) ->
     print_showinfo(State, Time),
     {Headers, State1} = process_header_data(HeaderData, State),
     lists:foreach(fun(Header) ->
-			%cecho:hline($ , ?MAX_HLINE),
-			?PRINT(Header)
-		end, Headers),
+                          %% cecho:hline($ , ?MAX_HLINE),
+                          ?PRINT(Header)
+                  end, Headers),
     draw_title_bar(State#state.columns, ""),
-    {RowList, State2} = process_row_data(RowDataList, State1), 
+    {RowList, State2} = process_row_data(RowDataList, State1),
     SortedRowList = sort(RowList, State),
     update_rows(SortedRowList, State2#state.columns, 0, State2#state.topn).
 
@@ -150,7 +147,7 @@ prd([], State, Acc) ->
 prd([RowData|Rest], State, Acc) ->
     case (State#state.callback):row(RowData, State#state.cbstate) of
 	{ok, skip, NCBState} ->
-	    prd(Rest, State#state{ cbstate = NCBState }, Acc); 
+	    prd(Rest, State#state{ cbstate = NCBState }, Acc);
 	{ok, Row, NCBState} ->
 	    prd(Rest, State#state{ cbstate = NCBState }, [Row|Acc])
     end.

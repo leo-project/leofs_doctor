@@ -19,7 +19,6 @@
 %% under the License.
 %%
 %%======================================================================
-%%==============================================================================
 %% Copyright 2010 Erlang Solutions Ltd.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +32,8 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%==============================================================================
+%%======================================================================
 -module(entop_format).
-
--author('mazen.harake@erlang-solutions.com').
 
 %% Module API
 -export([init/1, header/2, row/2]).
@@ -80,9 +77,9 @@ colname_to_idx("ht") ->
 
 init(Node) ->
     Columns = [{"Pid", 16, [{align, right}]},
-           {"Registered Name", 20, []},
-           {"Initial Call", 30, []},
-           {"Current Function", 40, []},
+               {"Registered Name", 20, []},
+               {"Initial Call", 30, []},
+               {"Current Function", 40, []},
 	       {"Reductions", 12, []},
 	       {"MQueue", 6, []},
 	       {"HSize", 12, []},

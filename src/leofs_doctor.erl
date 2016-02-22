@@ -19,7 +19,6 @@
 %% under the License.
 %%
 %%======================================================================
-%%==============================================================================
 %% Copyright 2010 Erlang Solutions Ltd.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +32,8 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%==============================================================================
+%%======================================================================
 -module(leofs_doctor).
-
--author('mazen.harake@erlang-solutions.com').
 
 -behaviour(application).
 
@@ -48,42 +45,41 @@
 %% Application API
 -export([start/1]).
 
+-define(DEF_NODE, 'manager_0@127.0.0.1').
+-define(DEF_SORT_COL, 5).
+-define(DEF_REVERSE, true).
+-define(DEF_TOPN, 10).
+-define(DEF_ROOT_SUP, nop).
+-define(DEF_EXPECTED_SUP_TREE, []).
+
 %% =============================================================================
 %% Behaviour Callbacks
 %% =============================================================================
-start(_, _) ->
+start(_,_) ->
     Res = leofs_doctor_sup:start_link(),
     State = try
-        %% show usage
-        case get_argument(help, false, fun any_to_true/1) of
-            true ->
-                usage(),
-                halt();
-            false ->
-                nop
-        end,
-        %% parameters related to connections
-        Node = get_argument(target_node, 'manager_0@127.0.0.1', fun erlang:list_to_atom/1),
-        %% parameters related to entop
-        SortCol = get_argument(sort_col, 5, fun entop_format:colname_to_idx/1),
-        Reverse = get_argument(reverse, true, fun list_to_bool/1),
-        TopN = get_argument(topn, 10, fun erlang:list_to_integer/1),
-        %% parameters related to supervisor tree
-        RootSup = get_argument(root_sup, nop, fun erlang:list_to_atom/1),
-        ExpectedSVT = get_argument(expected_svt, "", fun nop/1),
-        #state{ node = Node,
-                sort = SortCol,
-                reverse_sort = Reverse,
-                topn = TopN,
-                root_sup = RootSup,
-                expected_svt = ExpectedSVT
-               }
-    catch
-        _:_ ->
-            %% argument parse error occured
-            usage(),
-            halt()
-    end,
+                %% show usage
+                case get_argument(help, false, fun any_to_true/1) of
+                    true ->
+                        usage(),
+                        halt();
+                    false ->
+                        nop
+                end,
+                #state{
+                   node = get_argument(target_node, ?DEF_NODE, fun erlang:list_to_atom/1),
+                   sort = get_argument(sort_col, ?DEF_SORT_COL, fun entop_format:colname_to_idx/1),
+                   reverse_sort = get_argument(reverse, ?DEF_REVERSE, fun list_to_bool/1),
+                   topn = get_argument(topn, ?DEF_TOPN, fun erlang:list_to_integer/1),
+                   root_sup = get_argument(root_sup, ?DEF_ROOT_SUP, fun erlang:list_to_atom/1),
+                   expected_svt = get_argument(expected_svt, ?DEF_EXPECTED_SUP_TREE, fun nop/1)
+                  }
+            catch
+                _:_ ->
+                    %% argument parse error occured
+                    usage(),
+                    halt()
+            end,
     start(State),
     halt(),
     Res.
@@ -115,15 +111,18 @@ start(#state{node = Node} = State) ->
 %% =============================================================================
 %% Inner function
 %% =============================================================================
+%% @private
 usage() ->
     Usage = lists:append([
-                "Usage: leofs_doctor~n",
-                "\t[-target_node <TARGET_NODE>]~n",
-                "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
-                "\t[-root_sup <SUPERVISOR_NAME>][-expected_svt <FILENAME>]~n"
-                ]),
+                          "Usage: leofs_doctor~n",
+                          "\t[-target_node <TARGET_NODE>]~n",
+                          "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
+                          "\t[-root_sup <SUPERVISOR_NAME>][-expected_svt <FILENAME>]~n"
+                         ]),
     ?PRINT(Usage).
 
+
+%% @private
 get_argument(Key, Def, Modifier) ->
     case init:get_argument(Key) of
         {ok, [[Val]]} ->
@@ -132,12 +131,18 @@ get_argument(Key, Def, Modifier) ->
             Def
     end.
 
+
+%% @private
 nop(S) ->
     S.
 
+
+%% @private
 any_to_true(_) ->
     true.
 
+
+%% @private
 list_to_bool("true") ->
     true;
 list_to_bool("yes") ->

@@ -28,5 +28,8 @@
 %% Module API
 %% =============================================================================
 get_data() ->
-    TablesProplist =  [ ets:info(T) || T <- ets:all(), ets:info(T, named_table), ets:info(T, size) > 0 ],
+    TablesProplist =  [ ets:info(T)
+                        || T <- ets:all(),
+                           ets:info(T, named_table),
+                           ets:info(T, size) > 0 ],
     {ok, TablesProplist}.

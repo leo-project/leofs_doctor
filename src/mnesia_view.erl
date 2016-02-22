@@ -94,17 +94,17 @@ print_sysinfo(SysInfo) ->
     TranRestarts = proplists:get_value(transaction_restarts, SysInfo, 0),
     TranLogWrites = proplists:get_value(transaction_log_writes, SysInfo, 0),
     Format = lists:append([
-                "- System Info~n",
-                "\t- version: ~p~n",
-                "\t- is_running: ~p~n",
-                "\t- lock_queue: ~p~n",
-                "\t- transactions: ~p~n",
-                "\t- transaction_failures: ~p~n",
-                "\t- transaction_commits: ~p~n",
-                "\t- transaction_restarts: ~p~n",
-                "\t- transaction_log_writes: ~p~n"
-                ]),
-    ?PRINTF(Format, [Version, 
+                           "- System Info~n",
+                           "\t- version: ~p~n",
+                           "\t- is_running: ~p~n",
+                           "\t- lock_queue: ~p~n",
+                           "\t- transactions: ~p~n",
+                           "\t- transaction_failures: ~p~n",
+                           "\t- transaction_commits: ~p~n",
+                           "\t- transaction_restarts: ~p~n",
+                           "\t- transaction_log_writes: ~p~n"
+                          ]),
+    ?PRINTF(Format, [Version,
                      IsRunning,
                      LockQueue,
                      Trans,
@@ -117,7 +117,7 @@ print_tableinfo(TableProplist) ->
     ?PRINT("~n- Table Info~n~n"),
     Cols = cols(),
     draw_title_bar(Cols, ""),
-    RowList = prd(TableProplist, []), 
+    RowList = prd(TableProplist, []),
     update_rows(RowList, Cols).
 
 update_rows([], _) ->
