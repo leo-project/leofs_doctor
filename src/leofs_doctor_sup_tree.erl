@@ -25,26 +25,31 @@
 %%====================================================================
 -module(leofs_doctor_sup_tree).
 
+-include("leofs_doctor.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--export([info/2, print/2, write/3,
-         compare/3
+-export([info/1, info/2,
+         write/2, write/3
         ]).
-
 
 %%--------------------------------------------------------------------
 %% API
 %%--------------------------------------------------------------------
 %% @doc Retrieve a supervisor tree
--spec(info(Node, SupRef) ->
-             ok | {error, Cause} when Node::atom(),
-                                      SupRef::supervisor:sup_ref(),
-                                      Cause::any()).
-info(Node, SupRef) ->
-    info_1(Node, SupRef, 0, []).
+-spec(info(SupRef) ->
+             {ok, RetL} | {error, Cause} when SupRef::supervisor:sup_ref(),
+                                              RetL::[#sup_tree{}],
+                                              Cause::any()).
+info(SupRef) ->
+    info(erlang:node(), SupRef).
 
-%% @private
-info_1(Node, SupRef, Level, Acc) ->
+-spec(info(Node, SupRef) ->
+             {ok, [#sup_tree{}]} | {error, Cause} when Node::atom(),
+                                                       SupRef::supervisor:sup_ref(),
+                                                       Cause::any()).
+info(undefined, SupRef) ->
+    info(SupRef);
+info(Node, SupRef) ->
     case rpc:call(Node, erlang, whereis, [SupRef]) of
         undefined ->
             {error, undefined};
@@ -52,120 +57,57 @@ info_1(Node, SupRef, Level, Acc) ->
             {error, Cause};
         timeout = Cause ->
             {error, Cause};
-        _ ->
-            case catch rpc:call(Node, supervisor, which_children, [SupRef]) of
+        _Pid ->
+            case catch rpc:call(
+                         Node, supervisor, which_children, [SupRef]) of
                 {badrpc, Cause} ->
                     {error, Cause};
                 timeout = Cause ->
                     {error, Cause};
                 RetL ->
-                    info_2(RetL, Node, Level + 1, Acc)
+                    info_1(RetL, Node, [])
             end
     end.
 
 %% @private
-info_2([],_Node,_Level, Acc) ->
-    {ok, Acc};
-info_2([{Id, Pid, supervisor = Type,_Modules}|Rest], Node, Level, Acc) ->
-    Acc_1 = Acc ++ [{Id, pid_to_list(Pid), Type, Level}],
-    {ok, Acc_2} = info_1(Node, Id, Level, Acc_1),
-    info_2(Rest, Node, Level, Acc_2);
-
-info_2([{Id, Pid, Type,_Modules}|Rest], Node, Level, Acc)->
-    Acc_1 = Acc ++ [{Id, pid_to_list(Pid), Type, Level}],
-    info_2(Rest, Node, Level, Acc_1).
-
-
-%% @doc Print a supervisor's tree
--spec(print(Node, SupRef) ->
-             ok | {error, Cause} when Node::atom(),
-                                      SupRef::supervisor:sup_ref(),
-                                      Cause::any()).
-print(Node, SupRef) ->
-    case info(Node, SupRef) of
-        {ok, RetL} ->
-            print_1(RetL);
-        Error ->
-            Error
-    end.
-
-%% @private
-print_1([]) ->
-    ok;
-print_1([{Id, Pid, Type, Level}|Rest]) ->
-    io:format("~s~p | ~p | ~p~n",
-              [lists:duplicate((Level * 4), $ ), Id, Pid, Type]),
-    print_1(Rest).
-
+info_1([],_,Acc) ->
+    {ok, lists:reverse(Acc)};
+info_1([{Id, Pid, supervisor = Type,_Modules}|Rest], Node, Acc) ->
+    Children = case info(Node, Id) of
+                   {ok, RetL} ->
+                       RetL;
+                   {error,_} ->
+                       []
+               end,
+    info_1(Rest, Node, [#sup_tree{id = Id,
+                                  pid = Pid,
+                                  type = Type,
+                                  children = Children}|Acc]);
+info_1([{Id, Pid, Type,_Modules}|Rest], Node, Acc) ->
+    info_1(Rest, Node, [#sup_tree{id = Id,
+                                  pid = Pid,
+                                  type = Type}|Acc]).
 
 %% @doc Write a supervisor tree in the file
+-spec(write(SupRef, FileName) ->
+             ok | {error, Cause} when SupRef::supervisor:sup_ref(),
+                                      FileName::string(),
+                                      Cause::any()).
+write(SupRef, FileName) ->
+    Ret = info(SupRef),
+    write_1(Ret, FileName).
+
 -spec(write(Node, SupRef, FileName) ->
              ok | {error, Cause} when Node::atom(),
                                       SupRef::supervisor:sup_ref(),
                                       FileName::string(),
                                       Cause::any()).
 write(Node, SupRef, FileName) ->
-    case info(Node, SupRef) of
-        {ok, RetL} ->
-            leo_file:file_unconsult(FileName, RetL);
-        Error ->
-            Error
-    end.
-
-
-%% @doc Compare a current supervisor-tree with a dumped supervisor-tree
--spec(compare(Node, SupRef, DumpSupFile) ->
-             {ok, [term()]} | {error, Cause} when Node::atom(),
-                                                  SupRef::supervisor:sup_ref(),
-                                                  DumpSupFile::string(),
-                                                  Cause::any()).
-compare(Node, SupRef, DumpSupFile) ->
-    case filelib:is_file(DumpSupFile) of
-        true ->
-            case file:consult(DumpSupFile) of
-                {ok, RetLPrev} ->
-                    case info(Node, SupRef) of
-                        {ok, RetLCur} ->
-                            {ok, Acc_1} = compare_1(RetLCur, RetLPrev, []),
-                            compare_2(RetLPrev, RetLCur, Acc_1);
-                        Error ->
-                            Error
-                    end;
-                {error, Reason} ->
-                    {error, Reason}
-            end;
-        false ->
-            {error, []}
-    end.
+    Ret = info(Node, SupRef),
+    write_1(Ret, FileName).
 
 %% @private
-compare_1([],_,Acc) ->
-    {ok, lists:reverse(Acc)};
-compare_1([H|Rest], RetLPrev, Acc) ->
-    {Id,_,Type,Level} = H,
-    Acc_1 = case lists:keyfind(Id, 1, RetLPrev) of
-                false ->
-                    [{added, {Id, Type, Level}}|Acc];
-                {Id,_,Type_1,Level_1} ->
-                    case (Type == Type_1 andalso
-                          Level == Level_1) of
-                        true ->
-                            Acc;
-                        false ->
-                            [{different_type_or_level, {Id, Type, Level}}|Acc]
-                    end
-            end,
-    compare_1(Rest, RetLPrev, Acc_1).
-
-%% @private
-compare_2([],_,Acc) ->
-    {ok, lists:reverse(Acc)};
-compare_2([H|Rest], RetLCur, Acc) ->
-    {Id,_,Type,Level} = H,
-    Acc_1 = case lists:keyfind(Id, 1, RetLCur) of
-                false ->
-                    [{not_found, {Id, Type, Level}}|Acc];
-                _ ->
-                    Acc
-            end,
-    compare_2(Rest, RetLCur, Acc_1).
+write_1({ok, RetL}, FileName) ->
+    leo_file:file_unconsult(FileName, RetL);
+write_1({error, Cause},_FileName) ->
+    {error, Cause}.
