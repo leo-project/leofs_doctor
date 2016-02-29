@@ -50,7 +50,7 @@ Usage: leofs_doctor ## related to connection
                   -target_node <TARGET_NODE>
                   ## related to entop
                   [-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]
-                  [-interval <secs>] [-times <times>]
+                  [-interval <SECS>] [-times <TIMES>]
                   ## related to supervisour tree
                   [-root_sup <SUPERVISOR_NAME>] [-expected_svt <FILENAME>]
 
