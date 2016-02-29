@@ -49,6 +49,8 @@
 -define(DEF_SORT_COL, 5).
 -define(DEF_REVERSE, true).
 -define(DEF_TOPN, 10).
+-define(DEF_INTERVAL, 1).
+-define(DEF_TIMES, 1).
 -define(DEF_ROOT_SUP, nop).
 -define(DEF_EXPECTED_SUP_TREE, []).
 
@@ -79,6 +81,9 @@ start(_,_) ->
                            sort = get_argument(sort_col, ?DEF_SORT_COL, fun entop_format:colname_to_idx/1),
                            reverse_sort = get_argument(reverse, ?DEF_REVERSE, fun list_to_bool/1),
                            topn = get_argument(topn, ?DEF_TOPN, fun erlang:list_to_integer/1),
+                           interval = get_argument(interval, ?DEF_INTERVAL, fun erlang:list_to_integer/1),
+                           times = get_argument(times, ?DEF_TIMES, fun erlang:list_to_integer/1),
+                           %% interval = get_argument(interval, ?DEF_N, fun erlang:list_to_integer/1),
                            root_sup = get_argument(root_sup, ?DEF_ROOT_SUP, fun erlang:list_to_atom/1),
                            expected_svt = get_argument(expected_svt, ?DEF_EXPECTED_SUP_TREE, fun nop/1)
                           }
@@ -144,6 +149,7 @@ usage() ->
                           "Usage: leofs_doctor~n",
                           "\t-target_node <TARGET_NODE>~n",
                           "\t[-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]~n",
+                          "\t[-interval <SECS>] [-times <TIMES>]~n",
                           "\t[-root_sup <SUPERVISOR_NAME>][-expected_svt <FILENAME>]~n"
                          ]),
     ?PRINT(Usage).

@@ -36,6 +36,7 @@
 -module(entop_view).
 
 -include("leofs_doctor.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 %% Module API
 -export([draw/1]).
@@ -44,16 +45,45 @@
 %% Module API
 %% =============================================================================
 draw(State) ->
+    draw_1(0, State).
+
+%% @private
+draw_1(Times, #state{times = Times_1}) when Times == Times_1 ->
+    ok;
+draw_1(Times, #state{times = Times_1,
+                     interval = Interval} = State) ->
+    %% Output a number of times
+    case Times of
+        0 ->
+            ?PRINT(io_lib:format("#~w:~n",[Times + 1]));
+        _ ->
+            ?PRINT(io_lib:format("~n#~w:~n",[Times + 1]))
+    end,
+
+    %% Retrieve an entop results,
+                                                %$ then output them
     NState = load_remote_static_data(State),
     remote_load_code(NState#state.remote_module, State#state.node),
     NState2 = init_callback(NState),
-    fetch_and_update(NState2).
+    fetch_and_update(NState2),
+
+    %% Wait for the next procedure
+    case (Times_1 > 1) of
+        true ->
+            timer:sleep(timer:seconds(Interval));
+        false ->
+            void
+    end,
+    draw_1(Times + 1, State).
+
 
 %% =============================================================================
 %% Internal Functions
 %% =============================================================================
 load_remote_static_data(State) ->
-    RPC = fun(M, F, A) -> rpc:call(State#state.node, M, F, A) end,
+    RPC = fun(M, F, A) ->
+                  rpc:call(State#state.node, M, F, A)
+          end,
     Otp = RPC(erlang, system_info, [otp_release]),
     Erts = RPC(erlang, system_info, [version]),
     {Os1, Os2} = RPC(os, type, []),
@@ -62,8 +92,12 @@ load_remote_static_data(State) ->
 	     {smp, RPC(erlang, system_info, [smp_support])},
 	     {a_threads, RPC(erlang, system_info, [thread_pool_size])},
 	     {kpoll, RPC(erlang, system_info, [kernel_poll])}],
-    State#state{ otp_version = Otp, erts_version = Erts,
-		 os_fam = Os1, os = Os2, os_version = OsVers, node_flags = Flags }.
+    State#state{ otp_version = Otp,
+                 erts_version = Erts,
+		 os_fam = Os1,
+                 os = Os2,
+                 os_version = OsVers,
+                 node_flags = Flags }.
 
 remote_load_code(Module, Node) ->
     {_, Binary, Filename} = code:get_object_code(Module),
@@ -117,7 +151,8 @@ update_screen(Time, HeaderData, RowDataList, State) ->
     draw_title_bar(State#state.columns, ""),
     {RowList, State2} = process_row_data(RowDataList, State1),
     SortedRowList = sort(RowList, State),
-    update_rows(SortedRowList, State2#state.columns, 0, State2#state.topn).
+    update_rows(SortedRowList, State2#state.columns,
+                0, State2#state.topn).
 
 draw_title_bar([], Acc) ->
     ?PRINT(Acc),
@@ -136,7 +171,8 @@ print_showinfo(State, RoundTripTime) ->
     ?PRINT(lists:flatten(Showing)).
 
 process_header_data(HeaderData, State) ->
-    {ok, Headers, NCBState} = (State#state.callback):header(HeaderData, State#state.cbstate),
+    {ok, Headers, NCBState} =
+        (State#state.callback):header(HeaderData, State#state.cbstate),
     {Headers, State#state{ cbstate = NCBState }}.
 
 process_row_data(RowDataList, State) ->
@@ -161,7 +197,9 @@ sort(ProcList, State) ->
 	    Sorted
     end.
 
-update_rows(ProcValuesList, _, LineNumber, Max) when LineNumber == Max orelse ProcValuesList == [] -> ok;
+update_rows(ProcValuesList, _, LineNumber, Max)
+  when LineNumber == Max orelse ProcValuesList == [] ->
+    ok;
 update_rows([RowValues|Rest], Columns, LineNumber, Max) ->
     update_row(tuple_to_list(RowValues), Columns, LineNumber, ""),
     update_rows(Rest, Columns, LineNumber + 1, Max).
@@ -182,4 +220,5 @@ update_row([RowColValue|Rest], [{_,Width,Options}|RestColumns], LineNumber, Acc)
 		  _ ->
 		      string:left(StrColVal, Width)
 	      end,
-    update_row(Rest, RestColumns, LineNumber, Acc ++ Aligned ++ " ").
+    update_row(Rest, RestColumns,
+               LineNumber, Acc ++ Aligned ++ " ").

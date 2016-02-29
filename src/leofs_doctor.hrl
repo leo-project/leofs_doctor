@@ -34,10 +34,25 @@
 %% limitations under the License.
 %%======================================================================
 %% Records
--record(state, { callback = entop_format, remote_module = entop_collector,
-		 columns, cbstate, node, otp_version, erts_version, os_fam, os,
-		 os_version, node_flags, reverse_sort = true,
-		 sort = 1, topn = 10, root_sup, expected_svt }).
+-record(state, {
+          callback = entop_format :: atom(),
+          remote_module = entop_collector :: atom(),
+          columns :: [],
+          cbstate,
+          node :: atom(),
+          otp_version :: atom(),
+          erts_version :: atom(),
+          os_fam,
+          os = [] :: string(),
+          os_version = [] :: string(),
+          node_flags = [] :: [{atom(), any()}],
+          reverse_sort = true :: boolean(),
+          sort = 1 :: non_neg_integer(),
+          topn = 10 :: non_neg_integer(),
+          interval = 1 :: pos_integer(),
+          times = 1 :: pos_integer(),
+          root_sup :: atom(),
+          expected_svt = [] :: [term()]}).
 %% Defines
 -define(PRINT(Str), io:format(user, Str, [])).
 -define(PRINTF(FStr, Args), io:format(user, FStr, Args)).

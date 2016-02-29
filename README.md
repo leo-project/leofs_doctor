@@ -38,6 +38,7 @@ Usage: leofs_doctor ## related to connection
                   -target_node <TARGET_NODE>
                   ## related to entop
                   [-sort_col <COL_NAME>] [-reverse <yes|no>] [-topn <TOPN>]
+                  [-interval <secs>] [times <times>]
                   ## related to supervisour tree
                   [-root_sup <SUPERVISOR_NAME>] [-expected_svt <FILENAME>]
 
@@ -46,6 +47,8 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
                -sort_col red \
                -reverse y \
                -topn 20 \
+               -interval 1 \
+               -times 10 \
                -root_sup leo_manager_sup
 
 ## Case-2 - with "expected_svt" option:
@@ -54,6 +57,8 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
                -sort_col red \
                -reverse y \
                -topn 20 \
+               -interval 1 \
+               -times 10 \
                -root_sup leo_manager_sup \
                -expected_svt ~/dev/erlang/leofs_doctor/files/expected_svt.yml
 ```
@@ -112,6 +117,8 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
                   stdlib undefined
 
 [entop]
+
+#1:
 Node: 'manager_0@127.0.0.1'
  (17/6.4) unix (darwin 15.3.0) CPU:4 SMP +A:32 +K
 Sorting on "HSize" (Descending), Retrieved in 3ms
@@ -243,9 +250,11 @@ http://erlang.org/documentation/doc-6.4/lib/mnesia-4.12.5/doc/html/mnesia.html
 http://erlang.org/documentation/doc-6.4/lib/stdlib-2.4/doc/html/supervisor.html
   - Simply compare the current supervisour trees on memory with the expected one represented by a YAML file
 
-## Sponsors
-
-LeoProject/LeoFS is sponsored by [Rakuten, Inc.](http://global.rakuten.com/corp/) and supported by [Rakuten Institute of Technology](http://rit.rakuten.co.jp/).
-
 ## Code
 The part of code is derived from [entop](https://github.com/mazenharake/entop).
+
+## License
+LeoFS Doctor is distributed under [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
+
+## Sponsors
+LeoProject/LeoFS is sponsored by [Rakuten, Inc.](http://global.rakuten.com/corp/) and supported by [Rakuten Institute of Technology](http://rit.rakuten.co.jp/).
