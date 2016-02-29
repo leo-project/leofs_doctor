@@ -30,7 +30,19 @@ $ tree -vhD ./_rel/leofs_doctor/bin/
 └── [5.2K Feb 22 15:06]  start_clean.boot
 ```
 
-#### How to Use
+## How to Deliver
+
+* Archive LeoFS Doctor with the tar command
+
+```shell
+$ cd _rel/
+$ tar -czf leofs_doctor.tar.gz leofs_doctor
+```
+
+* Deliver ``leofs_doctor.tar.gz`` to users
+
+
+## How to Use 
 
 ```shell
 $ leofs_doctor --help
@@ -117,7 +129,6 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
                   stdlib undefined
 
 [entop]
-
 #1:
 Node: 'manager_0@127.0.0.1'
  (17/6.4) unix (darwin 15.3.0) CPU:4 SMP +A:32 +K
