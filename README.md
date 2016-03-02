@@ -42,8 +42,16 @@ $ tar -czf leofs_doctor.tar.gz leofs_doctor
 * Deliver ``leofs_doctor.tar.gz`` to users
 
 
-## How to Use 
+## How to Use
+### Prepare it
+* Modify **a cookie for distributed Erlang** in [files/vm.args](https://github.com/leo-project/leofs_doctor/blob/develop/files/vm.args) to be able to connect a target node:
 
+```shell
+## Cookie for distributed erlang
+-setcookie <COOKIE_FOR_DISTRIBUTED_ERLANG>
+```
+
+### Execute it
 ```shell
 $ leofs_doctor --help
 Usage: leofs_doctor ## related to connection
@@ -75,7 +83,7 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
                -expected_svt ~/dev/erlang/leofs_doctor/files/expected_svt.yml
 ```
 
-#### Output
+### Output
 
 ```erlang
 - Date: 2016/02/22 17:15:40
