@@ -21,7 +21,7 @@
 %%======================================================================
 {application, leofs_doctor,
  [{description, "Quick investigation into OTP applications on remote nodes with less operations."},
-  {vsn, "0.4.0"},
+  {vsn, "0.4.2"},
   {applications, [kernel, stdlib, yamerl, leofs_doctor]},
   {mod, {leofs_doctor, []}},
   {env, []}]}.
