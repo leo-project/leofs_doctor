@@ -139,33 +139,33 @@ $ leofs_doctor -target_node manager_0@127.0.0.1 \
 [entop]
 #1:
 Node: 'manager_0@127.0.0.1'
- (17/6.4) unix (darwin 15.3.0) CPU:4 SMP +A:32 +K
-Sorting on "HSize" (Descending), Retrieved in 3ms
-Time: local time 11:39:09, up for 002:21:24:44, 1ms latency,
-Processes: total 189 (RQ 0) at 49682 RpI using 14940.6k (14953.8k allocated)
-Memory: Sys 37381.4k, Atom 768.5k/774.9k, Bin 59.8k, Code 22852.0k, Ets 8231.8k
+ (17/6.4.1.5) unix (darwin 14.5.0) CPU:8 SMP +A:32 +K
+Sorting on "Reductions" (Descending), Retrieved in 2ms
+Time: local time 13:30:14, up for 000:00:02:42, 0ms latency,
+Processes: total 187 (RQ 0) at 2267 RpI using 15153.1k (15163.7k allocated)
+Memory: Sys 36775.4k, Atom 707.2k/734.9k, Bin 235.2k, Code 22867.4k, Ets 6320.9k
 
-             Pid Registered Name      Initial Call                   Current Function                         Reductions   MQueue HSize        SSize  HTotal
-      <0.1146.0> -                    proc_lib:init_p/5              gen_server:loop/6                        144007       0      121536       9      121536
-       <0.593.0> rex                  proc_lib:init_p/5              gen_server:loop/6                        267918       0      28690        9      28690
-         <0.3.0> erl_prim_loader      erlang:apply/2                 erl_prim_loader:loop/3                   114396       0      17731        6      17731
-       <0.606.0> code_server          erlang:apply/2                 code_server:loop/1                       8386558      0      17731        3      17731
-      <0.1147.0> -                    proc_lib:init_p/5              gen_server:loop/6                        159510330    0      17731        9      17731
-       <0.631.0> release_handler      proc_lib:init_p/5              gen_server:loop/6                        75273        0      10958        9      10958
-       <0.638.0> tcp_server_sup       proc_lib:init_p/5              gen_server:loop/6                        66907        0      4185         9      4185
-       <0.588.0> application_controll erlang:apply/2                 gen_server:loop/6                        68784        0      2586         7      2586
-       <0.697.0> leo_rpc_sup          proc_lib:init_p/5              gen_server:loop/6                        60331        0      2586         9      2586
-       <0.779.0> -                    proc_lib:init_p/5              disk_log:loop/1                          140856       0      2586         4      2586
-    <0.31259.12> -                    erlang:apply/2                 shell:get_command1/5                     14609        0      2586         16     2586
-       <0.663.0> -                    proc_lib:init_p/5              application_master:main_loop/2           56137        0      1598         6      1598
-       <0.670.0> leo_mq_sup           proc_lib:init_p/5              gen_server:loop/6                        70811        0      1598         9      1598
-       <0.673.0> mq_fail_rebalance_me proc_lib:init_p/5              gen_server:loop/6                        255121       0      1598         9      1598
-       <0.680.0> mq_fail_rebalance_me proc_lib:init_p/5              gen_server:loop/6                        250290       0      1598         9      1598
-       <0.681.0> mq_fail_rebalance_me proc_lib:init_p/5              gen_server:loop/6                        248238       0      1598         9      1598
-       <0.692.0> mq_monitor_node_mess proc_lib:init_p/5              gen_server:loop/6                        85845        0      1598         9      1598
-       <0.743.0> disk_log_server      proc_lib:init_p/5              gen_server:loop/6                        73777        0      1598         9      1598
-      <0.1124.0> snmpa_supervisor     proc_lib:init_p/5              gen_server:loop/6                        93614        0      1598         9      1598
-         <0.0.0> init                 otp_ring0:start/2              init:loop/1                              173667       0      987          2      987
+             Pid Registered Name      Initial Call                   Current Function                         Reductions   Reductions+  MQueue HSize        SSize  HTotal
+       <0.688.0> leo_redundant_manage proc_lib:init_p/5              gen_server:loop/6                        798419       798419       0      17731        9      17731
+      <0.1157.0> -                    proc_lib:init_p/5              gen_server:loop/6                        556483       556483       0      376          9      376
+       <0.691.0> leo_membership_clust proc_lib:init_p/5              gen_server:loop/6                        423614       423614       0      233          9      233
+       <0.643.0> -                    proc_lib:init_p/5              gen_server:loop/6                        302428       302428       0      2586         9      2586
+       <0.640.0> leo_manager_cluster_ proc_lib:init_p/5              gen_server:loop/6                        116306       116306       0      610          9      610
+       <0.689.0> leo_redundant_manage proc_lib:init_p/5              gen_server:loop/6                        108178       108178       0      376          9      376
+       <0.771.0> mnesia_tm            proc_lib:init_p/5              mnesia_tm:doit_loop/1                    105689       105689       0      376          17     376
+       <0.769.0> mnesia_locker        proc_lib:init_p/5              mnesia_locker:loop/1                     94995        94995        0      233          15     233
+         <0.3.0> erl_prim_loader      erlang:apply/2                 erl_prim_loader:loop/3                   81299        81299        0      17731        6      17731
+       <0.607.0> code_server          erlang:apply/2                 code_server:loop/1                       77216        77216        0      17731        3      17731
+         <0.0.0> init                 otp_ring0:start/2              init:loop/1                              68458        68458        0      2586         2      2586
+       <0.588.0> error_logger         proc_lib:init_p/5              gen_event:fetch_msg/5                    59318        59318        0      376          8      376
+       <0.606.0> file_server_2        proc_lib:init_p/5              gen_server:loop/6                        57878        57878        0      987          9      987
+       <0.644.0> tcp_server_cui_3     proc_lib:init_p/5              prim_inet:accept0/2                      56433        56433        0      10958        15     10958
+       <0.785.0> -                    proc_lib:init_p/5              disk_log:loop/1                          46284        46284        0      1598         4      1598
+      <0.1156.0> -                    proc_lib:init_p/5              gen_server:loop/6                        43796        43796        0      121536       9      121536
+       <0.645.0> tcp_server_cui_2     proc_lib:init_p/5              prim_inet:accept0/2                      43782        43782        0      610          15     610
+       <0.646.0> tcp_server_cui_1     proc_lib:init_p/5              prim_inet:accept0/2                      31013        31013        0      10958        15     10958
+       <0.669.0> leo_logger_file_e    proc_lib:init_p/5              gen_server:loop/6                        29422        29422        0      2586         9      2586
+       <0.690.0> leo_membership_clust proc_lib:init_p/5              gen_server:loop/6                        27807        27807        0      610          9      610
 
 [mnesia]
 - System Info
