@@ -36,7 +36,7 @@
 -module(entop_format).
 
 %% Module API
--export([init/1, header/2, row/2]).
+-export([init/1, header/2, row/3, row_reductions/1]).
 -export([colname_to_idx/1]).
 
 %% Records
@@ -58,22 +58,26 @@ colname_to_idx("reductions") ->
     5;
 colname_to_idx("red") ->
     5;
+colname_to_idx("reductions+") ->
+    6;
+colname_to_idx("red+") ->
+    6;
 colname_to_idx("mqueue") ->
-    6;
+    7;
 colname_to_idx("mq") ->
-    6;
+    7;
 colname_to_idx("hsize") ->
-    7;
+    8;
 colname_to_idx("hs") ->
-    7;
+    8;
 colname_to_idx("ssize") ->
-    8;
-colname_to_idx("ss") ->
-    8;
-colname_to_idx("htotal") ->
     9;
+colname_to_idx("ss") ->
+    9;
+colname_to_idx("htotal") ->
+    10;
 colname_to_idx("ht") ->
-    9.
+    10.
 
 init(Node) ->
     Columns = [{"Pid", 16, [{align, right}]},
@@ -81,6 +85,7 @@ init(Node) ->
                {"Initial Call", 30, []},
                {"Current Function", 40, []},
 	       {"Reductions", 12, []},
+	       {"Reductions+", 12, []},
 	       {"MQueue", 6, []},
 	       {"HSize", 12, []},
 	       {"SSize", 6, []},
@@ -116,9 +121,9 @@ header(SystemInfo, State) ->
     {ok, [ lists:flatten(Row) || Row <- [Row1, Row2, Row3, Row4] ], State}.
 
 %% Column Specific Callbacks
-row([{pid,_}|undefined], State) ->
+row([{pid,_}|undefined], _LastReductions, State) ->
     {ok, skip, State};
-row(ProcessInfo, State) ->
+row(ProcessInfo, LastReductions, State) ->
     Pid = proplists:get_value(pid, ProcessInfo),
     RegName = case proplists:get_value(registered_name, ProcessInfo) of
 		  [] ->
@@ -129,11 +134,15 @@ row(ProcessInfo, State) ->
     InitialCall = fun2str(proplists:get_value(initial_call, ProcessInfo, 0)),
     CurrentFunction = fun2str(proplists:get_value(current_function, ProcessInfo, 0)),
     Reductions = proplists:get_value(reductions, ProcessInfo, 0),
+    ReductionsP = Reductions - LastReductions,
     Queue = proplists:get_value(message_queue_len, ProcessInfo, 0),
     Heap = proplists:get_value(heap_size, ProcessInfo, 0),
     Stack = proplists:get_value(stack_size, ProcessInfo, 0),
     HeapTot = proplists:get_value(total_heap_size, ProcessInfo, 0),
-    {ok, {Pid, RegName, InitialCall, CurrentFunction, Reductions, Queue, Heap, Stack, HeapTot}, State}.
+    {ok, {Pid, RegName, InitialCall, CurrentFunction, Reductions, ReductionsP, Queue, Heap, Stack, HeapTot}, State}.
+
+row_reductions({Pid, _, _, _, Reductions, _, _, _, _, _} = _Row) ->
+    {Pid, Reductions}.
 
 fun2str({M, N, A}) ->
     lists:append([atom_to_list(M), ":", atom_to_list(N), "/", integer_to_list(A)]).
