@@ -52,7 +52,9 @@
           interval = 1 :: pos_integer(),
           times = 1 :: pos_integer(),
           root_sup :: atom(),
-          expected_svt = [] :: [term()]}).
+          expected_svt = [] :: [term()],
+          last_reductions = [] :: list()
+         }).
 %% Defines
 -define(PRINT(Str), io:format(user, Str, [])).
 -define(PRINTF(FStr, Args), io:format(user, FStr, Args)).

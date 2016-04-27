@@ -46,7 +46,7 @@
 -export([start/1]).
 
 
--define(DEF_SORT_COL, 5).
+-define(DEF_SORT_COL, 6).
 -define(DEF_REVERSE, true).
 -define(DEF_TOPN, 10).
 -define(DEF_INTERVAL, 1).
